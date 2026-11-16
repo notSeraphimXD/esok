@@ -29,6 +29,14 @@ class PatchNotesSheet extends StatelessWidget {
 
   static const _releases = [
     (
+      version: '1.9.6',
+      date: '16 Nov 2026',
+      notes: [
+        'Catatan di form Uang sekarang dibuka lewat editor dengan keyboard yang langsung muncul.',
+        'Keyboard muncul lagi saat field judul atau catatan tugas diketuk setelah ditutup dengan tombol Back.',
+      ],
+    ),
+    (
       version: '1.9.5',
       date: '16 Nov 2026',
       notes: [

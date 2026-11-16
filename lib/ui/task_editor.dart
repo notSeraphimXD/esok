@@ -1,10 +1,10 @@
-import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:uuid/uuid.dart';
 
 import '../data/task.dart';
 import '../parse/quick_add.dart';
 import '../util/format.dart';
+import '../util/keyboard.dart';
 import 'theme.dart';
 import 'time_picker_sheet.dart';
 
@@ -40,7 +40,7 @@ class _TaskEditorSheetState extends State<TaskEditorSheet> {
     _titleController = TextEditingController(text: widget.task?.title ?? '')
       ..addListener(_onTitleChanged);
     _notesController = TextEditingController(text: widget.task?.notes ?? '');
-    _notesFocus = FocusNode()..addListener(_onNotesFocusChanged);
+    _notesFocus = FocusNode();
     _date = widget.task?.date ?? dateOnly(widget.initialDate);
     _time = widget.task?.scheduledTime;
   }
@@ -51,21 +51,11 @@ class _TaskEditorSheetState extends State<TaskEditorSheet> {
       ..removeListener(_onTitleChanged)
       ..dispose();
     _notesController.dispose();
-    _notesFocus
-      ..removeListener(_onNotesFocusChanged)
-      ..dispose();
+    _notesFocus.dispose();
     super.dispose();
   }
 
   void _onTitleChanged() => setState(() {});
-
-  void _onNotesFocusChanged() {
-    if (!_notesFocus.hasFocus) return;
-    Future.delayed(const Duration(milliseconds: 80), () {
-      if (!mounted || !_notesFocus.hasFocus) return;
-      SystemChannels.textInput.invokeMethod<void>('TextInput.show');
-    });
-  }
 
   Future<void> _pickDate() async {
     final parsed = parseQuickAdd(_titleController.text);
@@ -195,6 +185,8 @@ class _TaskEditorSheetState extends State<TaskEditorSheet> {
               autofocus: !isEditing,
               textCapitalization: TextCapitalization.sentences,
               textInputAction: TextInputAction.done,
+              onTapAlwaysCalled: true,
+              onTap: () => showSoftKeyboard(),
               onSubmitted: (_) => _save(),
               style: TextStyle(fontSize: 17, color: EsokColors.ink),
               decoration: _fieldDecoration(hint: 'Apa yang perlu dikerjakan?'),
@@ -257,6 +249,8 @@ class _TaskEditorSheetState extends State<TaskEditorSheet> {
               minLines: 2,
               maxLines: 4,
               textCapitalization: TextCapitalization.sentences,
+              onTapAlwaysCalled: true,
+              onTap: () => showSoftKeyboard(focusNode: _notesFocus),
               style: TextStyle(fontSize: 15, color: EsokColors.ink),
               decoration: _fieldDecoration(hint: 'Catatan (opsional)'),
             ),

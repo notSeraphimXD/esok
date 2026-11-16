@@ -1263,62 +1263,65 @@ class _NoteField extends StatefulWidget {
 }
 
 class _NoteFieldState extends State<_NoteField> {
-  late final FocusNode _focusNode;
-  bool _focused = false;
-
   @override
   void initState() {
     super.initState();
-    _focusNode = FocusNode()..addListener(_onFocus);
+    widget.controller.addListener(_onTextChanged);
   }
 
   @override
   void dispose() {
-    _focusNode
-      ..removeListener(_onFocus)
-      ..dispose();
+    widget.controller.removeListener(_onTextChanged);
     super.dispose();
   }
 
-  void _onFocus() {
-    if (!mounted) return;
-    setState(() => _focused = _focusNode.hasFocus);
+  void _onTextChanged() {
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _editNote() async {
+    final result = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: const Color(0x5214120E),
+      builder: (_) => _NoteEditorSheet(initialValue: widget.controller.text),
+    );
+    if (!mounted || result == null) return;
+    widget.controller.text = result;
+    widget.controller.selection = TextSelection.collapsed(
+      offset: result.length,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final hasDetail = widget.detail != null && widget.detail!.isNotEmpty;
+    final note = widget.controller.text.trim();
     return Container(
       height: 44,
       padding: const EdgeInsets.symmetric(horizontal: 11),
       decoration: BoxDecoration(
         color: EsokColors.soft,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: _focused ? EsokColors.ink : Colors.transparent,
-          width: 1.2,
-        ),
       ),
       child: Row(
         children: [
           Expanded(
-            child: TextField(
-              controller: widget.controller,
-              focusNode: _focusNode,
-              textCapitalization: TextCapitalization.sentences,
-              textAlignVertical: TextAlignVertical.center,
-              style: TextStyle(fontSize: 13.5, color: EsokColors.ink),
-              decoration: InputDecoration(
-                hintText: 'Catatan',
-                hintStyle: TextStyle(
-                  fontSize: 13.5,
-                  color: EsokColors.muted,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: _editNote,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  note.isEmpty ? 'Catatan' : note,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 13.5,
+                    color: note.isEmpty ? EsokColors.muted : EsokColors.ink,
+                  ),
                 ),
-                isCollapsed: true,
-                border: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                contentPadding: EdgeInsets.zero,
               ),
             ),
           ),
@@ -1336,6 +1339,138 @@ class _NoteFieldState extends State<_NoteField> {
               ),
             ),
         ],
+      ),
+    );
+  }
+}
+
+class _NoteEditorSheet extends StatefulWidget {
+  const _NoteEditorSheet({required this.initialValue});
+
+  final String initialValue;
+
+  @override
+  State<_NoteEditorSheet> createState() => _NoteEditorSheetState();
+}
+
+class _NoteEditorSheetState extends State<_NoteEditorSheet> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialValue);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bottom = MediaQuery.viewInsetsOf(context).bottom;
+    return Padding(
+      padding: EdgeInsets.only(bottom: bottom),
+      child: Container(
+        decoration: BoxDecoration(
+          color: EsokColors.canvas,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        padding: const EdgeInsets.fromLTRB(22, 10, 22, 16),
+        child: SafeArea(
+          top: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Center(
+                child: Container(
+                  width: 34,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: EsokColors.handle,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              Text(
+                'Catatan transaksi',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: EsokColors.ink,
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _controller,
+                autofocus: true,
+                minLines: 2,
+                maxLines: 4,
+                textCapitalization: TextCapitalization.sentences,
+                style: TextStyle(fontSize: 15, color: EsokColors.ink),
+                decoration: InputDecoration(
+                  hintText: 'Tulis catatan…',
+                  hintStyle: TextStyle(color: EsokColors.muted),
+                  filled: true,
+                  fillColor: EsokColors.soft,
+                  contentPadding: const EdgeInsets.all(12),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: EsokColors.ink, width: 1.2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 46,
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: EsokColors.ink,
+                          side: BorderSide(color: EsokColors.lineStrong),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(11),
+                          ),
+                        ),
+                        child: const Text('Batal'),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: SizedBox(
+                      height: 46,
+                      child: FilledButton(
+                        onPressed: () => Navigator.of(
+                          context,
+                        ).pop(_controller.text.trim()),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: EsokColors.accent,
+                          foregroundColor: EsokColors.fabText,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(11),
+                          ),
+                        ),
+                        child: const Text('Simpan'),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

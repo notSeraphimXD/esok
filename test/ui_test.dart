@@ -49,7 +49,7 @@ void main() {
         home: const Scaffold(
           body: Align(
             alignment: Alignment.bottomCenter,
-            child: PatchNotesSheet(version: '1.9.5', buildNumber: '16'),
+            child: PatchNotesSheet(version: '1.9.6', buildNumber: '17'),
           ),
         ),
       ),
@@ -57,11 +57,11 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Catatan rilis'), findsOneWidget);
-    expect(find.text('Versi 1.9.5 (16)'), findsOneWidget);
+    expect(find.text('Versi 1.9.6 (17)'), findsOneWidget);
     expect(find.text('Terbaru'), findsOneWidget);
     expect(
       find.text(
-        'Notifikasi dalam aplikasi saat versi baru tersedia di GitHub Releases, dengan tombol buka halaman rilis.',
+        'Catatan di form Uang sekarang dibuka lewat editor dengan keyboard yang langsung muncul.',
       ),
       findsOneWidget,
     );
