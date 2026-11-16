@@ -49,7 +49,7 @@ void main() {
         home: const Scaffold(
           body: Align(
             alignment: Alignment.bottomCenter,
-            child: PatchNotesSheet(version: '1.9.4', buildNumber: '15'),
+            child: PatchNotesSheet(version: '1.9.5', buildNumber: '16'),
           ),
         ),
       ),
@@ -57,11 +57,11 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Catatan rilis'), findsOneWidget);
-    expect(find.text('Versi 1.9.4 (15)'), findsOneWidget);
+    expect(find.text('Versi 1.9.5 (16)'), findsOneWidget);
     expect(find.text('Terbaru'), findsOneWidget);
     expect(
       find.text(
-        'Widget tugas bisa di-scroll, jadi semua catatan bisa dilihat dan dicentang tanpa membuka aplikasi.',
+        'Notifikasi dalam aplikasi saat versi baru tersedia di GitHub Releases, dengan tombol buka halaman rilis.',
       ),
       findsOneWidget,
     );

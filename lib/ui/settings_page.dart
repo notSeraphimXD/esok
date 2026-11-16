@@ -10,12 +10,14 @@ import '../data/task_dao.dart';
 import '../notify/notifier.dart';
 import '../state/money_store.dart';
 import '../state/settings_store.dart';
+import '../update/update_checker.dart';
 import '../widget/widget_sync.dart';
 import 'data_page.dart';
 import 'manage_accounts.dart';
 import 'manage_categories.dart';
 import 'sound_page.dart';
 import 'theme.dart';
+import 'update_banner.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -77,6 +79,17 @@ class _SettingsPageState extends State<SettingsPage> {
     if (at == null) return 'Belum ada · ketuk untuk membuat';
     final stamp = DateFormat('d MMM, HH.mm', 'id_ID').format(at);
     return 'Terakhir $stamp · Download/Esok';
+  }
+
+  Future<void> _checkForUpdate() async {
+    _message('Memeriksa pembaruan…');
+    final result = await UpdateChecker.check(force: true);
+    if (!mounted) return;
+    if (result.update != null) {
+      await showUpdateAvailable(context, result.update!);
+      return;
+    }
+    _message(result.error ?? 'Kamu sudah memakai versi terbaru.');
   }
 
   Future<void> _openLeadDuration() async {
@@ -476,6 +489,12 @@ class _SettingsPageState extends State<SettingsPage> {
             _SettingsRow(
               title: 'Versi',
               trailing: _Trailing(_version),
+            ),
+            _SettingsRow(
+              title: 'Periksa pembaruan',
+              subtitle: 'Cek versi terbaru di GitHub',
+              trailing: const _Trailing('Cek ›'),
+              onTap: _checkForUpdate,
             ),
             _SettingsRow(
               title: 'Lisensi font',

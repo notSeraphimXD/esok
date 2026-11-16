@@ -29,6 +29,14 @@ class PatchNotesSheet extends StatelessWidget {
 
   static const _releases = [
     (
+      version: '1.9.5',
+      date: '16 Nov 2026',
+      notes: [
+        'Notifikasi dalam aplikasi saat versi baru tersedia di GitHub Releases, dengan tombol buka halaman rilis.',
+        'Baris “Periksa pembaruan” di Setelan untuk mengecek versi terbaru kapan saja.',
+      ],
+    ),
+    (
       version: '1.9.4',
       date: '16 Nov 2026',
       notes: [

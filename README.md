@@ -3,7 +3,7 @@
 Catatan harian dan buku kas dalam satu aplikasi Android.
 Tanpa akun, tanpa cloud — seluruh data tinggal di HP.
 
-Versi terbaru **1.9.4** · [Releases](../../releases)
+Versi terbaru **1.9.5** · [Releases](../../releases)
 
 ## Fitur
 
@@ -13,6 +13,7 @@ Versi terbaru **1.9.4** · [Releases](../../releases)
 - **Buku kas**: pengeluaran, pemasukan, pindah dompet, saldo per dompet, dan koreksi saldo.
 - **Widget** catatan dan ringkasan uang — bisa dicentang langsung dari layar utama.
 - **Cadangan otomatis** ke `Download/Esok/esok-backup.json`, tetap ada walau aplikasi dihapus.
+- **Notifikasi pembaruan** di dalam aplikasi saat ada rilis baru di GitHub.
 - **Tema** terang, gelap, atau ikut sistem.
 
 ## Memasang

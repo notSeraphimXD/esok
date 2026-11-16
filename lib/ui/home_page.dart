@@ -11,6 +11,7 @@ import '../data/task.dart';
 import '../notify/notifier.dart';
 import '../state/settings_store.dart';
 import '../state/task_store.dart';
+import '../update/update_checker.dart';
 import '../util/format.dart';
 import '../util/sound_fx.dart';
 import '../widget/widget_sync.dart';
@@ -21,6 +22,7 @@ import 'patch_notes.dart';
 import 'task_editor.dart';
 import 'theme.dart';
 import 'tx_editor_page.dart';
+import 'update_banner.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, this.onOpenMoney});
@@ -37,6 +39,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   late final PageController _controller;
   StreamSubscription<Uri?>? _widgetClicks;
+  Timer? _updateTimer;
+  bool _checkingUpdate = false;
 
   @override
   void initState() {
@@ -53,6 +57,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       HomeWidget.initiallyLaunchedFromHomeWidget().then((uri) {
         if (mounted) _openFromWidget(uri);
       });
+      _updateTimer = Timer(const Duration(seconds: 2), _checkForUpdate);
     });
   }
 
@@ -60,6 +65,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _widgetClicks?.cancel();
+    _updateTimer?.cancel();
     _controller.dispose();
     super.dispose();
   }
@@ -67,11 +73,24 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state != AppLifecycleState.resumed) return;
+    unawaited(_checkForUpdate());
     final store = context.read<TaskStore>();
     WidgetSync.drainPendingToggles(store).then((changed) async {
       if (changed) await WidgetSync.push();
       await store.refresh();
     });
+  }
+
+  Future<void> _checkForUpdate() async {
+    if (_checkingUpdate) return;
+    _checkingUpdate = true;
+    try {
+      final result = await UpdateChecker.check();
+      if (!mounted || result.update == null) return;
+      await showUpdateAvailable(context, result.update!);
+    } finally {
+      _checkingUpdate = false;
+    }
   }
 
   DateTime _dateForPage(int page) =>
