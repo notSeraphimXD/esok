@@ -3,7 +3,7 @@
 Catatan harian dan buku kas dalam satu aplikasi Android.
 Tanpa akun, tanpa cloud — seluruh data tinggal di HP.
 
-Versi terbaru **1.9.7** · [Releases](../../releases)
+Versi terbaru **1.9.8** · [Releases](../../releases)
 
 ## Fitur
 

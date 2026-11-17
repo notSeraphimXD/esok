@@ -64,6 +64,11 @@ private class TaskWidgetFactory(
             row.setImageViewResource(R.id.task_check, R.drawable.widget_check_on)
         } else {
             row.setTextColor(R.id.task_title, context.getColor(R.color.widget_ink))
+            row.setInt(
+                R.id.task_title,
+                "setPaintFlags",
+                Paint.ANTI_ALIAS_FLAG,
+            )
             row.setImageViewResource(R.id.task_check, R.drawable.widget_check_off)
         }
 
@@ -86,7 +91,6 @@ private class TaskWidgetFactory(
             putExtra(TaskWidgetActionActivity.EXTRA_URI, "jadwal://task/$taskId")
         }
         row.setOnClickFillInIntent(R.id.task_body, openFill)
-        row.setOnClickFillInIntent(R.id.task_row, openFill)
 
         return row
     }

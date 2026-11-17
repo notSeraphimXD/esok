@@ -29,6 +29,14 @@ class PatchNotesSheet extends StatelessWidget {
 
   static const _releases = [
     (
+      version: '1.9.8',
+      date: '16 Nov 2026',
+      notes: [
+        'Coretan judul di widget tugas hilang lagi setelah centang dilepas.',
+        'Tap tombol centang widget sekarang melakukan toggle; tap judul tetap membuka catatan.',
+      ],
+    ),
+    (
       version: '1.9.7',
       date: '16 Nov 2026',
       notes: [
