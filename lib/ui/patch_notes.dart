@@ -29,6 +29,13 @@ class PatchNotesSheet extends StatelessWidget {
 
   static const _releases = [
     (
+      version: '1.9.7',
+      date: '16 Nov 2026',
+      notes: [
+        'Catatan transaksi ditulis langsung ke transaksi saat diketik, sehingga tidak hilang ketika ditekan Simpan.',
+      ],
+    ),
+    (
       version: '1.9.6',
       date: '16 Nov 2026',
       notes: [

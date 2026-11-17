@@ -49,7 +49,7 @@ void main() {
         home: const Scaffold(
           body: Align(
             alignment: Alignment.bottomCenter,
-            child: PatchNotesSheet(version: '1.9.6', buildNumber: '17'),
+            child: PatchNotesSheet(version: '1.9.7', buildNumber: '18'),
           ),
         ),
       ),
@@ -57,11 +57,11 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Catatan rilis'), findsOneWidget);
-    expect(find.text('Versi 1.9.6 (17)'), findsOneWidget);
+    expect(find.text('Versi 1.9.7 (18)'), findsOneWidget);
     expect(find.text('Terbaru'), findsOneWidget);
     expect(
       find.text(
-        'Catatan di form Uang sekarang dibuka lewat editor dengan keyboard yang langsung muncul.',
+        'Catatan transaksi ditulis langsung ke transaksi saat diketik, sehingga tidak hilang ketika ditekan Simpan.',
       ),
       findsOneWidget,
     );

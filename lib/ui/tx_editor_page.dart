@@ -1280,17 +1280,26 @@ class _NoteFieldState extends State<_NoteField> {
   }
 
   Future<void> _editNote() async {
-    final result = await showModalBottomSheet<String>(
+    final original = widget.controller.text;
+    final saved = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       barrierColor: const Color(0x5214120E),
-      builder: (_) => _NoteEditorSheet(initialValue: widget.controller.text),
+      builder: (_) => _NoteEditorSheet(controller: widget.controller),
     );
-    if (!mounted || result == null) return;
-    widget.controller.text = result;
+    if (!mounted) return;
+    if (saved != true) {
+      widget.controller.text = original;
+      widget.controller.selection = TextSelection.collapsed(
+        offset: original.length,
+      );
+      return;
+    }
+    final note = widget.controller.text.trim();
+    widget.controller.text = note;
     widget.controller.selection = TextSelection.collapsed(
-      offset: result.length,
+      offset: note.length,
     );
   }
 
@@ -1345,29 +1354,15 @@ class _NoteFieldState extends State<_NoteField> {
 }
 
 class _NoteEditorSheet extends StatefulWidget {
-  const _NoteEditorSheet({required this.initialValue});
+  const _NoteEditorSheet({required this.controller});
 
-  final String initialValue;
+  final TextEditingController controller;
 
   @override
   State<_NoteEditorSheet> createState() => _NoteEditorSheetState();
 }
 
 class _NoteEditorSheetState extends State<_NoteEditorSheet> {
-  late final TextEditingController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = TextEditingController(text: widget.initialValue);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final bottom = MediaQuery.viewInsetsOf(context).bottom;
@@ -1406,7 +1401,7 @@ class _NoteEditorSheetState extends State<_NoteEditorSheet> {
               ),
               const SizedBox(height: 12),
               TextField(
-                controller: _controller,
+                controller: widget.controller,
                 autofocus: true,
                 minLines: 2,
                 maxLines: 4,
@@ -1435,7 +1430,7 @@ class _NoteEditorSheetState extends State<_NoteEditorSheet> {
                     child: SizedBox(
                       height: 46,
                       child: OutlinedButton(
-                        onPressed: () => Navigator.of(context).pop(),
+                        onPressed: () => Navigator.of(context).pop(false),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: EsokColors.ink,
                           side: BorderSide(color: EsokColors.lineStrong),
@@ -1452,9 +1447,7 @@ class _NoteEditorSheetState extends State<_NoteEditorSheet> {
                     child: SizedBox(
                       height: 46,
                       child: FilledButton(
-                        onPressed: () => Navigator.of(
-                          context,
-                        ).pop(_controller.text.trim()),
+                        onPressed: () => Navigator.of(context).pop(true),
                         style: FilledButton.styleFrom(
                           backgroundColor: EsokColors.accent,
                           foregroundColor: EsokColors.fabText,
